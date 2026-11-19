@@ -3,18 +3,29 @@ import { createContext, useCallback, useContext, useEffect, useState } from 'rea
 const NoticeContext = createContext(null);
 
 export const NoticeProvider = ({ children }) => {
-  const [message, setMessage] = useState('');
-  const showNotice = useCallback((text) => setMessage(text), []);
+  const [notice, setNotice] = useState({ text: '', version: 0 });
+
+  const showNotice = useCallback((text) => {
+    // version luôn tăng, kể cả khi nội dung thông báo mới giống hệt thông báo cũ.
+    setNotice((current) => ({ text, version: current.version + 1 }));
+  }, []);
 
   useEffect(() => {
-    if (!message) return undefined;
-    const timer = setTimeout(() => setMessage(''), 3000);
+    if (notice.version === 0) return undefined;
+    const timer = setTimeout(() => {
+      setNotice((current) => ({ ...current, text: '' }));
+    }, 3000);
     return () => clearTimeout(timer);
-  }, [message]);
+  }, [notice.version]);
 
   return (
     <NoticeContext.Provider value={showNotice}>
-      {message && <div className="notice-toast" role="status">♡ {message}</div>}
+      {notice.text && (
+        <div className="notice" role="status" aria-live="polite">
+          <span className="notice-check">✓</span>
+          {notice.text}
+        </div>
+      )}
       {children}
     </NoticeContext.Provider>
   );
@@ -22,6 +33,8 @@ export const NoticeProvider = ({ children }) => {
 
 export const useNotice = () => {
   const context = useContext(NoticeContext);
-  if (!context) throw new Error('useNotice phải được dùng bên trong NoticeProvider');
+  if (!context) {
+    throw new Error('useNotice phải được sử dụng bên trong NoticeProvider');
+  }
   return context;
 };

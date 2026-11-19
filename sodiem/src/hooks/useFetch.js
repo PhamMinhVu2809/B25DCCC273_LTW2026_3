@@ -7,14 +7,18 @@ const useFetch = (url) => {
 
   useEffect(() => {
     const controller = new AbortController();
+
     const loadData = async () => {
       setLoading(true);
       setError(null);
+
       try {
         const response = await fetch(url, { signal: controller.signal });
-        if (!response.ok) throw new Error('Không thể tải dữ liệu');
-        const json = await response.json();
-        setData(json);
+        if (!response.ok) {
+          throw new Error(`Yêu cầu dữ liệu thất bại: ${response.status}`);
+        }
+        const result = await response.json();
+        setData(result);
       } catch (err) {
         if (err.name !== 'AbortError') setError(err);
       } finally {
