@@ -1,6 +1,9 @@
 export const SEMESTERS = ['Học kỳ 1', 'Học kỳ 2', 'Học kỳ 3'];
+
 export const CREDIT_OPTIONS = [1, 2, 3, 4];
 
+// Quy đổi điểm hệ 10 -> điểm chữ -> điểm hệ 4.
+// Lấy mục đầu tiên có score >= min, theo thứ tự từ cao xuống thấp.
 export const GRADES = [
   { min: 9.0, letter: 'A+', point: 4.0 },
   { min: 8.5, letter: 'A', point: 3.7 },
@@ -21,4 +24,4 @@ export const RANKS = [
   { min: 0, title: 'Yếu' }
 ];
 
-export const formatPoint = (point) => point.toFixed(1);
+export const formatPoint = (point) => Number(point).toFixed(1);
